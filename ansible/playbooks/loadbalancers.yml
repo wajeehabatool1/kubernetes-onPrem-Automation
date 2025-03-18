@@ -1,0 +1,43 @@
+- name: Setup HAProxy Load Balancer with Keepalived
+  hosts: loadbalancers
+  become: yes
+  tasks:
+    - name: Install HAProxy and Keepalived
+      apt:
+        name:
+          - haproxy
+          - keepalived
+        state: present
+        update_cache: yes
+
+    - name: Generate HAProxy config
+      template:
+        src: ../templates/haproxy.cfg.j2
+        dest: /etc/haproxy/haproxy.cfg
+        owner: root
+        group: root
+        mode: 0644
+      notify: Restart HAProxy
+
+    - name: Generate Keepalived config
+      template:
+        src: ../templates/keepalived.conf.j2
+        dest: /etc/keepalived/keepalived.conf
+        owner: root
+        group: root
+        mode: 0644
+      notify: Restart Keepalived
+
+  handlers:
+    - name: Restart HAProxy
+      service:
+        name: haproxy
+        state: restarted
+        enabled: yes
+
+    - name: Restart Keepalived
+      service:
+        name: keepalived
+        state: restarted
+        enabled: yes
+

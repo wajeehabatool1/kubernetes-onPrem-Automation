@@ -1,0 +1,61 @@
+---
+- name: Setup Kubernetes Cluster
+  hosts: controlplane1
+  become: yes
+  vars:
+    lb_ip: "192.168.56.200"
+  tasks:
+
+    - name: Initialize Kubernetes Control Plane
+      shell: |
+        kubeadm init --control-plane-endpoint "{{ lb_ip }}:6443" --upload-certs
+      register: kubeadm_init
+
+    - name: Extract Join Commands
+      set_fact:
+        token: "{{ kubeadm_init.stdout | regex_search('--token\\s+([a-zA-Z0-9\\.]+)', '\\1') | first }}"
+        discovery_token_hash: "{{ kubeadm_init.stdout | regex_search('--discovery-token-ca-cert-hash\\s+sha256:([a-f0-9]+)', '\\1') | first }}"
+        cert_key: "{{ kubeadm_init.stdout | regex_search('--certificate-key\\s+([a-f0-9]+)', '\\1') | first }}"
+
+    - name: Set Join Command for Control Planes
+      set_fact:
+        control_plane_join: "kubeadm join {{ lb_ip }}:6443 --token {{ token }} --discovery-token-ca-cert-hash sha256:{{ discovery_token_hash }} --control-plane --certificate-key {{ cert_key }}"
+
+    - name: Set Join Command for Worker Nodes
+      set_fact:
+        worker_join: "kubeadm join {{ lb_ip }}:6443 --token {{ token }} --discovery-token-ca-cert-hash sha256:{{ discovery_token_hash }}"
+
+    - name: Configure kubectl for the root user
+      shell: |
+        mkdir -p "$HOME/.kube"
+        sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
+        sudo chown "$(id -u)":"$(id -g)" "$HOME/.kube/config"
+
+    - name: Install Calico Network Plugin
+      shell: |
+        kubectl apply -f https://docs.projectcalico.org/manifests/calico.yaml
+
+- name: Join Additional Control Planes
+  hosts: controlplanes
+  become: yes
+  tasks:
+
+    - name: Join Control Plane Nodes
+      shell: "{{ hostvars['controlplane1']['control_plane_join'] }}"
+      when: inventory_hostname != "controlplane1"
+
+    - name: Configure kubectl for the root user
+      shell: |
+        mkdir -p "$HOME/.kube"
+        sudo cp -i /etc/kubernetes/admin.conf "$HOME/.kube/config"
+        sudo chown "$(id -u)":"$(id -g)" "$HOME/.kube/config"
+      when: inventory_hostname != "controlplane1"
+
+- name: Join Worker Nodes
+  hosts: workers
+  become: yes
+  tasks:
+
+    - name: Join Worker Nodes
+      shell: "{{ hostvars['controlplane1']['worker_join'] }}"
+

@@ -1,0 +1,13 @@
+---
+- name: Kubernetes On-Prem Automation
+
+  tasks:
+    - name: Include Load Balancer setup playbook
+      import_playbook: playbooks/loadbalancers.yml
+
+    - name: Include Kubernetes prerequisites playbook
+      import_playbook: playbooks/k8s_prereqs.yml
+
+    - name: Include Kubernetes initialization playbook
+      import_playbook: playbooks/K8s_initialization.yml
+

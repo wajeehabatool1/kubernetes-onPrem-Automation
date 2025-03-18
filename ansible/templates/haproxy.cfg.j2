@@ -1,0 +1,13 @@
+frontend kubernetes-frontend
+    bind *:6443
+    option tcplog
+    mode tcp
+    default_backend kubernetes-backend
+
+backend kubernetes-backend
+    mode tcp
+    balance roundrobin
+    option tcp-check
+    {% for host in groups['controlplanes'] %}
+    server {{ host }} {{ hostvars[host]['ansible_host'] }}:6443 check
+    {% endfor %}

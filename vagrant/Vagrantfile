@@ -1,0 +1,25 @@
+Vagrant.configure("2") do |config|
+  nodes = [
+    { name: "controlplane1", memory: 4096, cpus: 2, ip: "192.168.56.101" },
+    { name: "controlplane2", memory: 4096, cpus: 2, ip: "192.168.56.102" },
+    { name: "controlplane3", memory: 4096, cpus: 2, ip: "192.168.56.103" },
+    { name: "worker1", memory: 4096, cpus: 2, ip: "192.168.56.104" },
+    { name: "worker2", memory: 4096, cpus: 2, ip: "192.168.56.105" },
+    { name: "lb1", memory: 2048, cpus: 1, ip: "192.168.56.106" },
+    { name: "lb2", memory: 2048, cpus: 1, ip: "192.168.56.107" }
+  ]
+
+  nodes.each do |node|
+    config.vm.define node[:name] do |vm|
+      vm.vm.box = "generic/ubuntu2204"  
+      vm.vm.hostname = node[:name]
+      vm.vm.network "private_network", ip: node[:ip]
+      vm.vm.provider "libvirt" do |lv|
+        lv.memory = node[:memory]
+        lv.cpus = node[:cpus]
+        lv.storage :file, size: "20G"
+      end
+    end
+  end
+end
+
