@@ -52,6 +52,10 @@ This setup is flexible—you can add or remove control planes and worker nodes a
     kubectl get nodes
     ```
 ---------------------------
+
+For a detailed manual setup of a highly available Kubernetes cluster using a stacked etcd topology and HAProxy, you can refer to another project:[HA-K8s-Cluster-Stacked-etcd-HAProxy](https://github.com/wajeehabatool1/HA-K8s-Cluster-Stacked-etcd-HAProx). This resource provides insights into manual configurations and complements the automated approach presented in this repository.
+
+---------------------------
 ## Contribution
 We welcome contributions! If you would like to improve or extend this project, please review the [Contributor Guidelines](https://github.com/wajeehabatool1/kubernetes-onPrem-Automation/blob/main/Contributions.md) before submitting a pull request.
 
@@ -60,6 +64,6 @@ We welcome contributions! If you would like to improve or extend this project, p
 This project is licensed under the MIT License.
 
 ----------------------
-For a detailed manual setup of a highly available Kubernetes cluster using a stacked etcd topology and HAProxy, you can refer to another project:[HA-K8s-Cluster-Stacked-etcd-HAProxy](https://github.com/wajeehabatool1/HA-K8s-Cluster-Stacked-etcd-HAProx). This resource provides insights into manual configurations and complements the automated approach presented in this repository.
+
   
 
