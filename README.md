@@ -53,7 +53,7 @@ This setup is flexible—you can add or remove control planes and worker nodes a
     ```
 ---------------------------
 
-For a detailed manual setup of a highly available Kubernetes cluster using a stacked etcd topology and HAProxy, you can refer to another project:[HA-K8s-Cluster-Stacked-etcd-HAProxy](https://github.com/wajeehabatool1/HA-K8s-Cluster-Stacked-etcd-HAProx). This resource provides insights into manual configurations and complements the automated approach presented in this repository.
+For a detailed manual setup of a highly available Kubernetes cluster using a stacked etcd topology and HAProxy, you can refer to another project:[HA-K8s-Cluster-Stacked-etcd-HAProxy](https://github.com/wajeehabatool1/HA-K8s-Cluster-Stacked-etcd-HAProxy). This resource provides insights into manual configurations and complements the automated approach presented in this repository.
 
 ---------------------------
 ## Contribution
